@@ -3,7 +3,7 @@ import yaml
 import logging
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 # ---------------- Logging Configuration ---------------- #
 logging.basicConfig(
@@ -66,21 +66,21 @@ except KeyError as e:
 
 try:
     # ---------------- Apply Bag of Words ---------------- #
-    vectorizer = CountVectorizer(max_features=max_feature)
+    vectorizer = TfidfVectorizer(max_features=max_feature)
     
-    X_train_bow = vectorizer.fit_transform(x_train)
-    X_test_bow = vectorizer.transform(x_test)  # Use transform, not fit_transform for test
-    logging.info("BOW transformation successful.")
+    X_train_tfidf = vectorizer.fit_transform(x_train)
+    X_test_tfidf = vectorizer.transform(x_test)  # Use transform, not fit_transform for test
+    logging.info("TFIDF transformation successful.")
 except Exception as e:
-    logging.error(f"Error in CountVectorizer: {e}")
+    logging.error(f"Error in TFIDFVectorizer: {e}")
     raise
 
 try:
     # ---------------- Create DataFrames ---------------- #
-    train_df = pd.DataFrame(X_train_bow.toarray())
+    train_df = pd.DataFrame(X_train_tfidf.toarray())
     train_df['label'] = y_train
 
-    test_df = pd.DataFrame(X_test_bow.toarray())
+    test_df = pd.DataFrame(X_test_tfidf.toarray())
     test_df['label'] = y_test
     logging.info("Train and test DataFrames created.")
 except Exception as e:
@@ -94,7 +94,7 @@ try:
 
     train_df.to_csv(os.path.join(data_path, "train_bow.csv"), index=False)
     test_df.to_csv(os.path.join(data_path, "test_bow.csv"), index=False)
-    logging.info("BOW feature files saved successfully.")
+    logging.info("tfidf feature files saved successfully.")
 except Exception as e:
     logging.error(f"Error saving CSV files: {e}")
     raise
